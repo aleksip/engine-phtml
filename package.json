@@ -1,6 +1,6 @@
 {
   "name": "engine-phtml",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "",
   "repository": "https://github.com/aleksip/engine-phtml",
   "main": "lib/engine_phtml.js",
