@@ -1,31 +1,66 @@
 <?php
+
+use Laminas\View\Helper\HeadScript;
+
 class Renderer
 {
-    public function run($options)
+    protected $sourceDir;
+
+    protected $hs;
+
+    public function __construct()
     {
-        if (!empty($options['data'])) {
-            $data = json_decode(base64_decode($options['data']), true);
+        $this->sourceDir = dirname(dirname(dirname(dirname(__DIR__)))) . '/source/';
+        $this->hs = new HeadScript($this->sourceDir);
+    }
+
+    public function run($__options)
+    {
+        if (!empty($__options['data'])) {
+            $data = json_decode(base64_decode($__options['data']), true);
             extract($data);
         }
-        if (!empty($options['string'])) {
-            eval('?>' . base64_decode($options['string']));
-        } elseif (!empty($options['file'])) {
-            include $options['file'];
+        if (!empty($__options['string'])) {
+            eval('?>' . base64_decode($__options['string']));
+        } elseif (!empty($__options['file'])) {
+            include $__options['file'];
         }
     }
 
-    public function render($name, $values = null)
+    public function render($__name, $values = null)
     {
-        $patternsPath = dirname(dirname(dirname(dirname(__DIR__)))) . '/source/';
         if (!empty($values)) {
             extract($values);
         }
-        include "$patternsPath/$name";
+        ob_start();
+        $includeReturn = include $this->sourceDir . $__name;
+        $content = ob_get_clean();
+        if ($includeReturn === false && empty($content)) {
+            throw new \Exception(sprintf(
+                '%s: Unable to render template "%s"; file include failed',
+                __METHOD__,
+                $__name
+            ));
+        }
+
+        return $content;
+    }
+
+    public function inlineScript(...$args)
+    {
+        return ($this->hs)(...$args);
+    }
+
+    public function headScript(...$args)
+    {
+        return ($this->hs)(...$args);
     }
 }
+
 $autoload = dirname(__DIR__) . '/vendor/autoload.php';
 if (file_exists($autoload)) {
     include $autoload;
 }
+include 'HeadScript.php';
 $renderer = new Renderer();
 $renderer->run(getopt(null, ['string::', 'file::', 'data::']));
