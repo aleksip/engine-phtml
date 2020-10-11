@@ -4,9 +4,9 @@ use Laminas\View\Helper\HeadScript;
 
 class Renderer
 {
-    protected $sourceDir;
+    private $sourceDir;
 
-    protected $hs;
+    private $hs;
 
     public function __construct()
     {
@@ -56,11 +56,3 @@ class Renderer
         return ($this->hs)(...$args);
     }
 }
-
-$autoload = dirname(__DIR__) . '/vendor/autoload.php';
-if (file_exists($autoload)) {
-    include $autoload;
-}
-include 'HeadScript.php';
-$renderer = new Renderer();
-$renderer->run(getopt(null, ['string::', 'file::', 'data::']));
