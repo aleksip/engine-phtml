@@ -1,5 +1,6 @@
 <?php
 
+use Laminas\View\Helper\HtmlAttributes;
 use Laminas\View\Helper\HeadScript;
 
 class Renderer
@@ -8,10 +9,13 @@ class Renderer
 
     private $hs;
 
+    private $attribs;
+
     public function __construct()
     {
         $this->sourceDir = dirname(dirname(dirname(dirname(__DIR__)))) . '/source/';
         $this->hs = new HeadScript($this->sourceDir);
+        $this->attribs = new HtmlAttributes();
     }
 
     public function run($__options)
@@ -54,5 +58,10 @@ class Renderer
     public function headScript(...$args)
     {
         return ($this->hs)(...$args);
+    }
+
+    public function htmlAttributes(...$args)
+    {
+        return ($this->attribs)(...$args);
     }
 }
