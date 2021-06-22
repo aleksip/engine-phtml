@@ -1,11 +1,14 @@
 <?php
 
-use Laminas\View\Helper\HtmlAttributes;
+use Laminas\View\Helper\HeadLink;
 use Laminas\View\Helper\HeadScript;
+use Laminas\View\Helper\HtmlAttributes;
 
 class Renderer
 {
     private $sourceDir;
+
+    private $hl;
 
     private $hs;
 
@@ -14,6 +17,7 @@ class Renderer
     public function __construct()
     {
         $this->sourceDir = dirname(dirname(dirname(dirname(__DIR__)))) . '/source/';
+        $this->hl = new HeadLink();
         $this->hs = new HeadScript($this->sourceDir);
         $this->attribs = new HtmlAttributes();
     }
@@ -63,5 +67,25 @@ class Renderer
     public function htmlAttributes(...$args)
     {
         return ($this->attribs)(...$args);
+    }
+
+    public function headLink(...$args)
+    {
+        return ($this->hl)(...$args);
+    }
+
+    public function imageLink($image)
+    {
+        return '/images/' . $image;
+    }
+
+    public function jsTranslations()
+    {
+        return new class
+        {
+            public function addStrings(array $new)
+            {
+            }
+        };
     }
 }
