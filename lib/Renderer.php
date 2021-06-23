@@ -1,5 +1,6 @@
 <?php
 
+use Laminas\Escaper\Escaper;
 use Laminas\View\Helper\HeadLink;
 use Laminas\View\Helper\HeadScript;
 use Laminas\View\Helper\HtmlAttributes;
@@ -12,6 +13,8 @@ class Renderer
 
     private $hs;
 
+    private $escaper;
+
     private $attribs;
 
     public function __construct()
@@ -19,7 +22,8 @@ class Renderer
         $this->sourceDir = dirname(dirname(dirname(dirname(__DIR__)))) . '/source/';
         $this->hl = new HeadLink();
         $this->hs = new HeadScript($this->sourceDir);
-        $this->attribs = new HtmlAttributes();
+        $this->escaper = new Escaper();
+        $this->attribs = new HtmlAttributes($this->escaper);
     }
 
     public function run($__options)
@@ -77,6 +81,11 @@ class Renderer
     public function imageLink($image)
     {
         return '/images/' . $image;
+    }
+
+    public function transEsc($str, $tokens = [], $default = null)
+    {
+        return $this->escaper->escapeHtml($str);
     }
 
     public function jsTranslations()

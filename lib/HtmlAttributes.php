@@ -16,6 +16,13 @@ use Laminas\View\HtmlAttributesSet;
  */
 class HtmlAttributes
 {
+    protected $escaper;
+
+    public function __construct(Escaper $escaper)
+    {
+        $this->escaper = $escaper;
+    }
+
     /**
      * Returns a new HtmlAttributesSet object, optionally initializing it with
      * the provided value.
@@ -23,8 +30,8 @@ class HtmlAttributes
     public function __invoke(iterable $attributes = []): HtmlAttributesSet
     {
         return new HtmlAttributesSet(
-            new Escaper(),
-            new Escaper(),
+            $this->escaper,
+            $this->escaper,
             $attributes
         );
     }
