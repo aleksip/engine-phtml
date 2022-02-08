@@ -17,6 +17,8 @@ class Renderer
 
     private $attribs;
 
+    private $dataStack;
+
     public function __construct()
     {
         $this->sourceDir = dirname(dirname(dirname(dirname(__DIR__)))) . '/source/';
@@ -24,12 +26,14 @@ class Renderer
         $this->hs = new HeadScript($this->sourceDir);
         $this->escaper = new Escaper();
         $this->attribs = new HtmlAttributes($this->escaper);
+        $this->dataStack = [];
     }
 
     public function run($__options)
     {
         if (!empty($__options['data'])) {
             $data = json_decode(base64_decode($__options['data']), true);
+            $this->dataStack[] = $data;
             extract($data);
         }
         if (!empty($__options['string'])) {
@@ -39,14 +43,14 @@ class Renderer
         }
     }
 
-    public function render($__name, $values = null)
+    public function render($__name, $values = [])
     {
-        if (!empty($values)) {
-            extract($values);
-        }
+        $this->dataStack[] = $values;
+        extract($values);
         ob_start();
         $includeReturn = include $this->sourceDir . $__name;
         $content = ob_get_clean();
+        array_pop($this->dataStack);
         if ($includeReturn === false && empty($content)) {
             throw new \Exception(sprintf(
                 '%s: Unable to render template "%s"; file include failed',
@@ -58,19 +62,14 @@ class Renderer
         return $content;
     }
 
-    public function inlineScript(...$args)
+    public function escapeHtml($value)
     {
-        return ($this->hs)(...$args);
+        return $this->escaper->escapeHtml($value);
     }
 
-    public function headScript(...$args)
+    public function escapeHtmlAttr($value)
     {
-        return ($this->hs)(...$args);
-    }
-
-    public function htmlAttributes(...$args)
-    {
-        return ($this->attribs)(...$args);
+        return $this->escaper->escapeHtmlAttr($value);
     }
 
     public function headLink(...$args)
@@ -78,14 +77,24 @@ class Renderer
         return ($this->hl)(...$args);
     }
 
+    public function htmlAttributes(...$args)
+    {
+        return ($this->attribs)(...$args);
+    }
+
+    public function headScript(...$args)
+    {
+        return ($this->hs)(...$args);
+    }
+
     public function imageLink($image)
     {
         return '/images/' . $image;
     }
 
-    public function transEsc($str, $tokens = [], $default = null)
+    public function inlineScript(...$args)
     {
-        return $this->escaper->escapeHtml($str);
+        return ($this->hs)(...$args);
     }
 
     public function jsTranslations()
@@ -96,5 +105,20 @@ class Renderer
             {
             }
         };
+    }
+
+    public function transEsc($str, $tokens = [], $default = null)
+    {
+        return $this->escapeHtml($this->translate($str));
+    }
+
+    public function translate($str, $tokens = [], $default = null)
+    {
+        return end($this->dataStack)[$str] ?? $str;
+    }
+
+    public function url($name = null, $params = [], $options = [], $reuseMatchedParams = false)
+    {
+        return $name;
     }
 }
