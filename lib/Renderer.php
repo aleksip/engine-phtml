@@ -21,7 +21,7 @@ class Renderer
 
     public function __construct()
     {
-        $this->sourceDir = dirname(dirname(dirname(dirname(__DIR__)))) . '/source/';
+        $this->sourceDir = dirname(dirname(dirname(__DIR__))) . '/source/';
         $this->hl = new HeadLink();
         $this->hs = new HeadScript($this->sourceDir);
         $this->escaper = new Escaper();
