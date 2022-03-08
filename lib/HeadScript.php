@@ -68,27 +68,51 @@ class HeadScript
 
     public function appendFile($src, $type = 'text/javascript', $attrs = [])
     {
-        return $this->setFile($src, $type, $attrs);
+        $this->output .= $this->getFile($src, $type, $attrs);
+        return $this;
+    }
+
+    public function prependFile($src, $type = 'text/javascript', $attrs = [])
+    {
+        $this->output = $this->getFile($src, $type, $attrs) . $this->output;
+        return $this;
     }
 
     public function setFile($src, $type = 'text/javascript', $attrs = [])
     {
-        ob_start();
-        echo "<script type=\"$type\">\n";
-        include $this->sourceDir . $src;
-        echo "</script>\n";
-        $script = ob_get_clean();
-        return $this->output = $script;
+        $this->output = $this->getFile($src, $type, $attrs);
+        return $this;
     }
 
     public function appendScript($script, $type = 'text/javascript', $attrs = [])
     {
-        return $this->setScript($script, $type, $attrs);
+        $this->output .= $this->getScript($script, $type, $attrs);
+        return $this;
+    }
+
+    public function prependScript($script, $type = 'text/javascript', $attrs = [])
+    {
+        $this->output = $this->getScript($script, $type, $attrs) . $this->output;
+        return $this;
     }
 
     public function setScript($script, $type = 'text/javascript', $attrs = [])
     {
-        $this->output = "<script type=\"$type\">\n$script\n</script>\n";
-        return $this->output;
+        $this->output = $this->getScript($script, $type, $attrs);
+        return $this;
+    }
+
+    protected function getFile($src, $type, $attrs)
+    {
+      ob_start();
+      echo "<script type=\"$type\">\n";
+      include $this->sourceDir . $src;
+      echo "</script>\n";
+      return ob_get_clean();
+    }
+
+    protected function getScript($script, $type, $attrs)
+    {
+        return "<script type=\"$type\">\n$script\n</script>\n";
     }
 }
