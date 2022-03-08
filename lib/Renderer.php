@@ -72,6 +72,11 @@ class Renderer
         return $content;
     }
 
+    public function basePath()
+    {
+        return '';
+    }
+
     public function escapeHtml($value)
     {
         return $this->escaper->escapeHtml($value);
