@@ -19,6 +19,8 @@ class Renderer
 
     private $dataStack;
 
+    private $globalData;
+
     public function __construct()
     {
         $this->sourceDir = dirname(dirname(dirname(__DIR__))) . '/source/';
@@ -27,14 +29,21 @@ class Renderer
         $this->escaper = new Escaper();
         $this->attribs = new HtmlAttributes($this->escaper);
         $this->dataStack = [];
+        $this->globalData = [];
     }
 
     public function run($__options)
     {
+        $globalData = [];
         if (!empty($__options['data'])) {
             $data = json_decode(base64_decode($__options['data']), true);
             $this->dataStack[] = $data;
+            $globalData = $data;
             extract($data);
+        }
+        if (!empty($__options['jsonFileData']) && !empty($globalData)) {
+            $jsonFileData = json_decode(base64_decode($__options['jsonFileData']), true);
+            $this->globalData = array_diff_key($globalData, $jsonFileData);
         }
         if (!empty($__options['string'])) {
             eval('?>' . base64_decode($__options['string']));
@@ -45,8 +54,9 @@ class Renderer
 
     public function render($__name, $values = [])
     {
-        $this->dataStack[] = $values;
-        extract($values);
+        $templateData = array_merge($this->globalData, $values);
+        $this->dataStack[] = $templateData;
+        extract($templateData);
         ob_start();
         $includeReturn = include $this->sourceDir . $__name;
         $content = ob_get_clean();

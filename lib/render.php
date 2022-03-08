@@ -12,4 +12,4 @@ include 'HeadLink.php';
 include 'HeadScript.php';
 
 $renderer = new Renderer();
-$renderer->run(getopt(null, ['string::', 'file::', 'data::']));
+$renderer->run(getopt(null, ['string::', 'file::', 'data::', 'jsonFileData::']));
