@@ -52,11 +52,12 @@ class Renderer
         }
     }
 
-    public function render($__name, $values = [])
+    public function render($__name, $__values = [])
     {
-        $templateData = array_merge($this->globalData, $values);
-        $this->dataStack[] = $templateData;
-        extract($templateData);
+        $__name = $this->expandName($__name);
+        $__templateData = array_merge($this->globalData, $__values);
+        $this->dataStack[] = $__templateData;
+        extract($__templateData);
         ob_start();
         $includeReturn = include $this->sourceDir . $__name;
         $content = ob_get_clean();
@@ -134,6 +135,21 @@ class Renderer
 
     public function url($name = null, $params = [], $options = [], $reuseMatchedParams = false)
     {
+        return $name;
+    }
+
+    protected function expandName(string $name): string
+    {
+        if (!empty($name)
+            && strpos($name, 'components/') === 0
+            && substr($name, -6) !== '.phtml'
+        ) {
+            $parts = explode('/', $name);
+            $last = array_pop($parts);
+            if ($last !== array_pop($parts)) {
+                $name = $name . '/' . $last . '.phtml';
+            }
+        }
         return $name;
     }
 }
