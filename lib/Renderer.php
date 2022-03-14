@@ -50,6 +50,7 @@ class Renderer
         } elseif (!empty($__options['file'])) {
             include $__options['file'];
         }
+        echo $this->hs;
     }
 
     public function render($__name, $__values = [])
