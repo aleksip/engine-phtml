@@ -12,13 +12,10 @@ class HeadScript
     const FILE   = 'FILE';
     const SCRIPT = 'SCRIPT';
 
-    protected $sourceDir;
-
     protected $output;
 
-    public function __construct($sourceDir)
+    public function __construct()
     {
-        $this->sourceDir = $sourceDir;
         $this->output = '';
     }
 
@@ -104,11 +101,7 @@ class HeadScript
 
     protected function getFile($src, $type, $attrs)
     {
-      ob_start();
-      echo "<script type=\"$type\">\n";
-      include $this->sourceDir . $src;
-      echo "</script>\n";
-      return ob_get_clean();
+      return "<script src=\"$src\"></script>\n";
     }
 
     protected function getScript($script, $type, $attrs)

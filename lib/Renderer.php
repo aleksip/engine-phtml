@@ -50,6 +50,7 @@ class Renderer
         } elseif (!empty($__options['file'])) {
             include $__options['file'];
         }
+        echo $this->hl;
         echo $this->hs;
     }
 
@@ -74,9 +75,9 @@ class Renderer
         return $content;
     }
 
-    public function basePath()
+    public function basePath($file)
     {
-        return '';
+        return '/' . $file;
     }
 
     public function escapeHtml($value)
