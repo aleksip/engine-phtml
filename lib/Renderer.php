@@ -127,7 +127,12 @@ class Renderer
 
     public function transEsc($str, $tokens = [], $default = null)
     {
-        return $this->escapeHtml($this->translate($str));
+        return $this->escapeHtml($this->translate($str, $tokens, $default));
+    }
+
+    public function transEscAttr($str, $tokens = [], $default = null)
+    {
+        return $this->escapeHtmlAttr($this->translate($str, $tokens, $default));
     }
 
     public function translate($str, $tokens = [], $default = null)
