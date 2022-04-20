@@ -153,7 +153,9 @@ class Renderer
         ) {
             $parts = explode('/', $name);
             $last = array_pop($parts);
-            if ($last !== array_pop($parts)) {
+            if ($last !== array_pop($parts)
+                && strpos($last, '.') === false
+            ) {
                 $name = $name . '/' . $last . '.phtml';
             }
         }
