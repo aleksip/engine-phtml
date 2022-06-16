@@ -35,6 +35,10 @@ class HeadLink
 
     protected function getLink($href, $media = 'screen', $conditionalStylesheet = '', $extras = [])
     {
+        if (false === strpos($href, '://')
+            && '/' !== substr($href, 0, 1)) {
+            $href = '/' . $href;
+        }
         return "<link href=\"$href\" rel=\"stylesheet\">\n";
     }
 }

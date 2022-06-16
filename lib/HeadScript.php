@@ -101,7 +101,11 @@ class HeadScript
 
     protected function getFile($src, $type, $attrs)
     {
-      return "<script src=\"$src\"></script>\n";
+        if (false === strpos($src, '://')
+            && '/' !== substr($src, 0, 1)) {
+            $src = '/' . $src;
+        }
+        return "<script src=\"$src\"></script>\n";
     }
 
     protected function getScript($script, $type, $attrs)
